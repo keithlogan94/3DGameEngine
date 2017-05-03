@@ -56,6 +56,18 @@ int main(int argc, char ** argv) {
 	//Pre Game Loop Setup
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
+	//Tmp
+	GLfloat	vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.0f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+
+
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
