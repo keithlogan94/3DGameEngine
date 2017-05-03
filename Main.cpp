@@ -50,11 +50,15 @@ int main(int argc, char ** argv) {
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
-	//Set Key Callbacks
+	//Set Callbacks
 	glfwSetKeyCallback(window, key_callback);
+
+	//Pre Game Loop Setup
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
+		glClear(GL_COLOR_BUFFER_BIT);
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
