@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <exception>
 
+#include "Callbacks.h"
+
 int main(int argc, char ** argv) {
 	//Initialize GLFW
 	glfwInit();
@@ -47,6 +49,9 @@ int main(int argc, char ** argv) {
 	int width = 800, height = 600;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
+
+	//Set Key Callbacks
+	glfwSetKeyCallback(window, key_callback);
 
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {

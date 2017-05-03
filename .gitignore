@@ -7,3 +7,4 @@ Release/
 *.exe
 *.ipdb
 *.iobj
+*.user
