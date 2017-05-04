@@ -62,7 +62,6 @@ int main(int argc, char ** argv) {
 	//Pre Game Loop Setup
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-
 	//Tmp
 	GLfloat	vertices[] = {
 		-0.5f, -0.5f, 0.0f,
@@ -70,14 +69,19 @@ int main(int argc, char ** argv) {
 		 0.0f,  0.5f, 0.0f
 	};
 	GLfloat elementVertices[] = {
-		0.5f,  0.5f, 0.0f,  // Top Right
-		0.5f, -0.5f, 0.0f,  // Bottom Right
-		-0.5f, -0.5f, 0.0f,  // Bottom Left
-		-0.5f,  0.5f, 0.0f   // Top Left 
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // Top Right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // Bottom Left
+		-0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f  // Top Left 
 	};
 	GLuint indices[] = {  // Note that we start from 0!
 		0, 1, 3,   // First Triangle
 		1, 2, 3    // Second Triangle
+	};
+	GLfloat texCoords[] = {
+		0.0f, 0.0f,  // Lower-left corner  
+		1.0f, 0.0f,  // Lower-right corner
+		0.5f, 1.0f   // Top-center corner
 	};
 
 	//Encapsulate Buffer Object Data In Vertex Array Object
@@ -98,8 +102,10 @@ int main(int argc, char ** argv) {
 	glBufferData(GL_ARRAY_BUFFER, sizeof elementVertices, elementVertices, GL_STATIC_DRAW);
 
 	//Enable Shader Communication Of Data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof GLfloat));
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
 
 	//Unbind Vertex Array Object
@@ -107,8 +113,8 @@ int main(int argc, char ** argv) {
 	
 	//Create Shader Program
 	GLuint simpleShader = createShaderProgram(
-		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simple),/* vertex shader source in Shaders.h */
-		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simple)/* fragment shader source in Shader.h */
+		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::multipleAttribPointer),/* vertex shader source in Shaders.h */
+		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::multipleAttribPointer)/* fragment shader source in Shader.h */
 	);
 
 
@@ -116,7 +122,6 @@ int main(int argc, char ** argv) {
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwPollEvents();
-
 
 		//Use Shader
 		glUseProgram(simpleShader);

@@ -21,6 +21,34 @@ namespace glsl {  namespace vs {
 		}
 		);
 
+		//==========================
+		// changeing color VS
+		//==========================
+		constexpr GLchar * const changeColors = glsl(330 core,
+			layout(location = 0) in vec3 position;
+			out vec4 vertexColor;
+
+			uniform vec4 ourColor;
+		void main() {
+			gl_Position = vec4(position, 1.0f);
+			vertexColor = ourColor;
+			}
+			);
+
+		//==========================
+		// multiple attib pointer
+		//==========================
+		constexpr GLchar * const multipleAttribPointer = glsl(330 core,
+			layout(location = 0) in vec3 position;
+			layout(location = 1) in vec3 posColor;
+			out vec4 outColor;
+
+			void main() {
+				gl_Position = vec4(position, 1.0f);
+				outColor = vec4(posColor, 1.0f);
+			}
+			);
+
 
 	} namespace fs {
 
@@ -36,6 +64,30 @@ namespace glsl {  namespace vs {
 			color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 		}
 		);
+
+		//==========================
+		// changeing color FS
+		//==========================
+		constexpr GLchar * const changeColors = glsl(330 core,
+				in vec4 vertexColor;
+				out vec4 color;
+
+				void main() {
+					color = vertexColor;
+				}
+			);
+
+		//==========================
+		// multiple attib pointer
+		//==========================
+		constexpr GLchar * const multipleAttribPointer = glsl(330 core,
+				in vec4 outColor;
+				out vec4 color;
+
+				void main() {
+					color = outColor;
+				}
+			);
 
 
 	} }
