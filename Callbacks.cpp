@@ -7,6 +7,9 @@ bool keys[1024];
 //This global variable gets used by the Camera class
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
+//These global variables get used by various files
+int width = 800, height = 600;
+
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode)
 {
@@ -56,4 +59,10 @@ void cursor_callback(GLFWwindow* window, double xpos, double ypos)
 	front.y = sin(glm::radians(pitch));
 	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	::cameraFront = glm::normalize(front);
+}
+
+void window_resize_callback(GLFWwindow * window, int width, int height)
+{
+	::width = width;
+	::height = height;
 }

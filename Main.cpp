@@ -34,10 +34,14 @@ int main(int argc, char ** argv) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
+	extern int width;
+	extern int height;
 
 	//Create Window
-	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(width, height, "LearnOpenGL", nullptr, nullptr);
 	if (!window) {
 		const char *err = "The Window failed to create.";
 		std::cerr << err;
@@ -60,13 +64,13 @@ int main(int argc, char ** argv) {
 	}
 
 	//Set the view port for rendering
-	int width = 800, height = 600;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
 	//Set Callbacks
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_callback);
+	glfwSetWindowSizeCallback(window, window_resize_callback);
 
 	//Pre Game Loop Setup
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
