@@ -5,6 +5,10 @@
 // Software By Keith Becker Copyright 2017 (c)
 //
 
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif //!_DEBUG
+
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 
@@ -16,6 +20,7 @@
 #include "Shaders.h"
 
 int main(int argc, char ** argv) {
+
 	//Initialize GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -88,8 +93,6 @@ int main(int argc, char ** argv) {
 		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simple),/* vertex shader source in Shaders.h */
 		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simple)/* fragment shader source in Shader.h */
 	);
-
-
 
 
 	//Game Loop
