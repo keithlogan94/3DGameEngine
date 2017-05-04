@@ -1,5 +1,8 @@
 #pragma once
 #include <GL\glew.h>
+#include <iostream>
+#include <exception>
+#include <stdexcept>
 
 #define glsl(version, glsl) "#version " #version "\n" #glsl
 
@@ -36,3 +39,11 @@ namespace glsl {  namespace vs {
 
 
 	} }
+
+enum class e_shader_type { VERTEX_SHADER, FRAGMENT_SHADER };
+
+GLuint compileShader(e_shader_type shaderType, const GLchar* const *shaderSource);
+GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader);
+
+
+
