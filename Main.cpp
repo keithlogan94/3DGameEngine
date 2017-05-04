@@ -13,6 +13,7 @@
 #include <exception>
 
 #include "Callbacks.h"
+#include "Shaders.h"
 
 int main(int argc, char ** argv) {
 	//Initialize GLFW
@@ -66,6 +67,13 @@ int main(int argc, char ** argv) {
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+
+	//Create & Use Shader Program
+	GLuint simpleShader = createShaderProgram(
+		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simple),/* vertex shader source in Shaders.h */
+		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simple)/* fragment shader source in Shader.h */
+	);
+	glUseProgram(simpleShader);
 
 
 	//Game Loop
