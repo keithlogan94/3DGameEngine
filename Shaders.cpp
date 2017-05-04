@@ -40,12 +40,15 @@ GLuint compileShader(e_shader_type shaderType, const GLchar* const *shaderSource
 
 GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader)
 {
+	//Create Shader Program
 	GLuint shaderProgram;
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
 
 #ifdef _DEBUG
+	//Check Link Status
 	GLint success;
 	GLchar infoLog[512];
 	glGetProgramiv(shaderprogram, GL_LINK_STATUS, &success);
@@ -59,6 +62,10 @@ GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader)
 		std::cout << "shader program created successfully" << std::endl;
 	}
 #endif //_DEBUG
+	
+	//Clean Up Individual Shaders
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	return shaderProgram;
 }
