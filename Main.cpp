@@ -120,7 +120,13 @@ int main(int argc, char ** argv) {
 		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::texture)/* fragment shader source in Shader.h */
 	);
 
-	GLuint texture = raw_texture_load("wooden-container.data", 512, 512);
+	//Load & Store Textures
+	glActiveTexture(GL_TEXTURE0);
+	GLuint texture = raw_texture_load("wooden-container.data", 512, 512, e_image_format::RGB);
+
+	glActiveTexture(GL_TEXTURE1);
+	GLuint texture1 = raw_texture_load("awesomeface.data", 512, 512, e_image_format::RGBA);
+
 	
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
@@ -130,9 +136,12 @@ int main(int argc, char ** argv) {
 		//Use Shader
 		glUseProgram(simpleShader);
 
+		//Set Uniform Variables After glUseProgram Has Been Called
+		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture1"), 0);
+		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture2"), 1);
+
 		//Bind VAO Object & Draw
 		glBindVertexArray(vao);
-		glBindTexture(GL_TEXTURE_2D, texture);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);

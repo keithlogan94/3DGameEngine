@@ -116,10 +116,11 @@ namespace glsl {  namespace vs {
 
 			out vec4 color;
 
-			uniform sampler2D ourTexture;
+			uniform sampler2D ourTexture1;
+			uniform sampler2D ourTexture2;
 
 			void main() {
-				color = texture(ourTexture, outTexCoord);
+				color = mix(texture(ourTexture1, outTexCoord), texture(ourTexture2, outTexCoord), 0.5f);
 			}
 			);
 
