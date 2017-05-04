@@ -22,6 +22,9 @@
 #include "Callbacks.h"
 #include "Shaders.h"
 #include "Textures.h"
+#include "Camera.h"
+
+
 
 int main(int argc, char ** argv) {
 
@@ -161,6 +164,8 @@ int main(int argc, char ** argv) {
 	glActiveTexture(GL_TEXTURE1);
 	GLuint texture1 = raw_texture_load("awesomeface.data", 512, 512, e_image_format::RGBA);
 
+
+
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
 		glm::vec3(2.0f,  5.0f, -15.0f),
@@ -174,6 +179,9 @@ int main(int argc, char ** argv) {
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	//Camera
+	Camera camera;
+
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -186,8 +194,11 @@ int main(int argc, char ** argv) {
 		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture1"), 0);
 		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture2"), 1);
 
-		//Generate Matrices
+		//Update Camera
+		camera.updateMovement();
 		glm::mat4 view;
+		view = camera.getView();
+
 		glm::mat4 projection;
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		projection = glm::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
@@ -201,9 +212,7 @@ int main(int argc, char ** argv) {
 		glBindVertexArray(vao);
 
 		for (GLuint i = 0; i < 10; i++) {
-			//Send Model Matrix & Draw For Each Cube
-
-			//Update Model Matrix
+			//Update & Send Model Matrix & Draw For Each Cube
 			glm::mat4 model;
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, 20.0f * i, glm::vec3(1.0f, 3.0f, 0.5f));
