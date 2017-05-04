@@ -69,18 +69,35 @@ int main(int argc, char ** argv) {
 		 0.5f, -0.5f, 0.0f,
 		 0.0f,  0.5f, 0.0f
 	};
+	GLfloat elementVertices[] = {
+		0.5f,  0.5f, 0.0f,  // Top Right
+		0.5f, -0.5f, 0.0f,  // Bottom Right
+		-0.5f, -0.5f, 0.0f,  // Bottom Left
+		-0.5f,  0.5f, 0.0f   // Top Left 
+	};
+	GLuint indices[] = {  // Note that we start from 0!
+		0, 1, 3,   // First Triangle
+		1, 2, 3    // Second Triangle
+	};
 
 	//Encapsulate Buffer Object Data In Vertex Array Object
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
+	//Generate & Store Indices In Element Buffer Object
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof indices, indices, GL_STATIC_DRAW);
+
+	//Generate & Store Vertices in Vertex Buffer Object
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof elementVertices, elementVertices, GL_STATIC_DRAW);
 
-	//Define How To Handle Buffer Data To Shader
-	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+	//Enable Shader Communication Of Data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
@@ -106,7 +123,8 @@ int main(int argc, char ** argv) {
 
 		//Bind VAO Object & Draw
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
