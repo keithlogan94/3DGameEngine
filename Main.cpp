@@ -18,6 +18,7 @@
 
 #include "Callbacks.h"
 #include "Shaders.h"
+#include "Textures.h"
 
 int main(int argc, char ** argv) {
 
@@ -69,10 +70,10 @@ int main(int argc, char ** argv) {
 		 0.0f,  0.5f, 0.0f
 	};
 	GLfloat elementVertices[] = {
-		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // Top Right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,  // Bottom Left
-		-0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f  // Top Left 
+		 0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // Top Right
+		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // Bottom Left
+		-0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f  // Top Left 
 	};
 	GLuint indices[] = {  // Note that we start from 0!
 		0, 1, 3,   // First Triangle
@@ -102,10 +103,12 @@ int main(int argc, char ** argv) {
 	glBufferData(GL_ARRAY_BUFFER, sizeof elementVertices, elementVertices, GL_STATIC_DRAW);
 
 	//Enable Shader Communication Of Data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof GLfloat));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof GLfloat));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof GLfloat));
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 
 	//Unbind Vertex Array Object
@@ -113,11 +116,12 @@ int main(int argc, char ** argv) {
 	
 	//Create Shader Program
 	GLuint simpleShader = createShaderProgram(
-		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::multipleAttribPointer),/* vertex shader source in Shaders.h */
-		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::multipleAttribPointer)/* fragment shader source in Shader.h */
+		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::texture),/* vertex shader source in Shaders.h */
+		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::texture)/* fragment shader source in Shader.h */
 	);
 
-
+	GLuint texture = raw_texture_load("wooden-container.data", 512, 512);
+	
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -128,6 +132,7 @@ int main(int argc, char ** argv) {
 
 		//Bind VAO Object & Draw
 		glBindVertexArray(vao);
+		glBindTexture(GL_TEXTURE_2D, texture);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);

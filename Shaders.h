@@ -49,6 +49,24 @@ namespace glsl {  namespace vs {
 			}
 			);
 
+		//==========================
+		// Texture
+		//==========================
+		constexpr GLchar * const texture = glsl(330 core,
+			layout(location = 0) in vec3 position;
+			layout(location = 1) in vec3 color;
+			layout(location = 2) in vec2 texCoord;
+
+			out vec3 ourColor;
+			out vec2 outTexCoord;
+
+			void main() {
+				gl_Position = vec4(position, 1.0f);
+				ourColor = color;
+				outTexCoord = texCoord;
+			}
+			);
+
 
 	} namespace fs {
 
@@ -87,6 +105,22 @@ namespace glsl {  namespace vs {
 				void main() {
 					color = outColor;
 				}
+			);
+
+		//==========================
+		// Texture FS
+		//==========================
+		constexpr GLchar * const texture = glsl(330 core,
+			in vec2 outTexCoord;
+			in vec3 ourColor;
+
+			out vec4 color;
+
+			uniform sampler2D ourTexture;
+
+			void main() {
+				color = texture(ourTexture, outTexCoord);
+			}
 			);
 
 

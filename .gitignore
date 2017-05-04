@@ -3,8 +3,10 @@
 Debug/
 x64/
 Release/
+Images/
 *.ilk
 *.exe
 *.ipdb
 *.iobj
 *.user
+*.data
