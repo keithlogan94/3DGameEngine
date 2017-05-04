@@ -24,7 +24,8 @@
 #include "Textures.h"
 #include "Camera.h"
 
-
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
 int main(int argc, char ** argv) {
 
@@ -65,10 +66,12 @@ int main(int argc, char ** argv) {
 
 	//Set Callbacks
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, cursor_callback);
 
 	//Pre Game Loop Setup
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//Tmp
 	GLfloat vertices[] = {
@@ -186,6 +189,11 @@ int main(int argc, char ** argv) {
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwPollEvents();
+
+		//Update DeltaTime
+		GLfloat currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
 		//Use Shader
 		glUseProgram(simpleShader);
