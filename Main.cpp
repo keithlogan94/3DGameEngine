@@ -57,29 +57,55 @@ int main(int argc, char ** argv) {
 	//Pre Game Loop Setup
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
+
 	//Tmp
 	GLfloat	vertices[] = {
 		-0.5f, -0.5f, 0.0f,
 		 0.0f, -0.5f, 0.0f,
 		 0.0f,  0.5f, 0.0f
 	};
+
+	//Encapsulate Buffer Object Data In Vertex Array Object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
-	//Create & Use Shader Program
+	//Define How To Handle Buffer Data To Shader
+	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+
+	//Unbind Vertex Array Object
+	glBindVertexArray(0);
+	
+	//Create Shader Program
 	GLuint simpleShader = createShaderProgram(
 		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simple),/* vertex shader source in Shaders.h */
 		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simple)/* fragment shader source in Shader.h */
 	);
-	glUseProgram(simpleShader);
+
+
 
 
 	//Game Loop
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwPollEvents();
+
+
+		//Use Shader
+		glUseProgram(simpleShader);
+
+		//Bind VAO Object & Draw
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindVertexArray(0);
+
 		glfwSwapBuffers(window);
 	}
 

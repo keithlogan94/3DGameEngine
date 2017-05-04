@@ -51,9 +51,9 @@ GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader)
 	//Check Link Status
 	GLint success;
 	GLchar infoLog[512];
-	glGetProgramiv(shaderprogram, GL_LINK_STATUS, &success);
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(shaderprogram, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		const char *err { "error linking shader program " };
 		std::cerr << err << infoLog << std::endl;
 		throw std::exception{ err };
