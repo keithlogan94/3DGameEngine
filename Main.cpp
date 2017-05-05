@@ -221,12 +221,9 @@ int main(int argc, char ** argv) {
 		glBindVertexArray(0);
 
 		glUseProgram(lightShader);
-
-
 		glm::mat4 lightModel;
-		lightModel = glm::translate(lightModel, glm::vec3(0.0f, 1.0f, 0.3f) * glm::vec3(10));
-		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-
+		lightModel = glm::translate(lightModel, glm::vec3(2.0f, 1.0f, 0.3f));
+		lightModel = glm::scale(lightModel, glm::vec3(0.5f));
 		sendModelViewProjToShader(lightShader, lightModel, view, projection);
 
 		glBindVertexArray(lightVAO);
