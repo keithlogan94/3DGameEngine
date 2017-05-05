@@ -1,5 +1,7 @@
 #pragma once
 #include <GL\glew.h>
+#include <glm.hpp>
+
 #include <iostream>
 #include <exception>
 #include <stdexcept>
@@ -69,6 +71,36 @@ namespace glsl {  namespace vs {
 			}
 			);
 
+		//==========================
+		// Simple Object
+		//==========================
+		constexpr GLchar * const simpleObject = glsl(330 core,
+			layout(location = 0) in vec3 position;
+
+			uniform mat4 model;
+			uniform mat4 view;
+			uniform mat4 projection;
+
+			void main() {
+				gl_Position = projection * view * model * vec4(position, 1.0f);
+			}
+			);
+
+		//==========================
+		// Simple Light
+		//==========================
+		constexpr GLchar * const simpleLight = glsl(330 core,
+			layout(location = 0) in vec3 position;
+			
+			uniform mat4 model;
+			uniform mat4 view;
+			uniform mat4 projection;
+
+			void main() {
+				gl_Position = projection * view * model * vec4(position, 1.0f);
+			}
+			);
+
 
 	} namespace fs {
 
@@ -125,6 +157,30 @@ namespace glsl {  namespace vs {
 			}
 			);
 
+		//==========================
+		// simple Object FS
+		//==========================
+		constexpr GLchar * const simpleObject = glsl(330 core,
+			out vec4 color;
+	
+			uniform vec3 objectColor;
+			uniform vec3 lightColor;
+
+			void main() {
+				color = vec4(lightColor * objectColor, 1.0f);
+			}
+			);
+
+		//==========================
+		// simple light FS
+		//==========================
+		constexpr GLchar * const simpleLight = glsl(330 core,
+			out vec4 color;
+
+			void main() {
+				color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			);
 
 	} }
 
@@ -132,6 +188,6 @@ enum class e_shader_type { VERTEX_SHADER, FRAGMENT_SHADER };
 
 GLuint compileShader(e_shader_type shaderType, const GLchar* const *shaderSource);
 GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader);
-
+void sendModelViewProjToShader(GLuint shaderProgram, glm::mat4 &model, glm::mat4 &view, glm::mat4 &proj);
 
 

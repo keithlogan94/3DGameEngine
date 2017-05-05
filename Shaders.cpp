@@ -69,3 +69,15 @@ GLuint createShaderProgram(GLuint vertexShader, GLuint fragmentShader)
 
 	return shaderProgram;
 }
+
+//Uniform variables must be named 'model' 'view' 'projection'
+void sendModelViewProjToShader(GLuint shaderProgram, glm::mat4 & model, glm::mat4 & view, glm::mat4 & proj)
+{
+	GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+	GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+	GLuint projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &proj[0][0]);
+}

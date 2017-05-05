@@ -137,54 +137,54 @@ int main(int argc, char ** argv) {
 		0.5f, 1.0f   // Top-center corner
 	};
 
-	//Encapsulate Buffer Object Data In Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 
 	//Generate & Store Vertices in Vertex Buffer Object
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Encapsulate Buffer Object Data In Vertex Array Object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	//Enable Shader Communication Of Data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof GLfloat));
 	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
 
 
 	//Unbind Vertex Array Object
 	glBindVertexArray(0);
+
+
+	//Create The Light VAO
+	GLuint lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
 	
-	//Create Shader Program
-	GLuint simpleShader = createShaderProgram(
-		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::texture),/* vertex shader source in Shaders.h */
-		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::texture)/* fragment shader source in Shader.h */
+	glBindVertexArray(0);
+
+
+	
+	//Create Shader Programs
+	GLuint objectShader = createShaderProgram(
+		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simpleObject),/* vertex shader source in Shaders.h */
+		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simpleObject)/* fragment shader source in Shader.h */
 	);
 
-	//Load & Store Textures
-	glActiveTexture(GL_TEXTURE0);
-	GLuint texture = raw_texture_load("wooden-container.data", 512, 512, e_image_format::RGB);
-
-	glActiveTexture(GL_TEXTURE1);
-	GLuint texture1 = raw_texture_load("awesomeface.data", 512, 512, e_image_format::RGBA);
-
-
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	GLuint lightShader = createShaderProgram(
+		compileShader(e_shader_type::VERTEX_SHADER, &glsl::vs::simpleLight),
+		compileShader(e_shader_type::FRAGMENT_SHADER, &glsl::fs::simpleLight)
+	);
 
 	//Camera
 	Camera camera;
@@ -199,42 +199,38 @@ int main(int argc, char ** argv) {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		//Use Shader
-		glUseProgram(simpleShader);
-
-		//Set Uniform Variables After glUseProgram Has Been Called
-		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture1"), 0);
-		glUniform1i(glGetUniformLocation(simpleShader, "ourTexture2"), 1);
-
-		//Update Camera
 		camera.updateMovement();
+
+		glUseProgram(objectShader);
+		GLint lightColorLoc = glGetUniformLocation(objectShader, "lightColor");
+		GLint objectColorLoc = glGetUniformLocation(objectShader, "objectColor");
+		glUniform3f(lightColorLoc, 1.0f, 0.5f, 0.31f);
+		glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f);
+
 		glm::mat4 view;
 		view = camera.getView();
-
 		glm::mat4 projection;
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		projection = glm::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-		
-		//Send Matrices To Shader
-		GLuint viewLoc = glGetUniformLocation(simpleShader, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-		GLuint projectionLoc = glGetUniformLocation(simpleShader, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.3f));
+
+		sendModelViewProjToShader(objectShader, model, view, projection);
 
 		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
 
-		for (GLuint i = 0; i < 10; i++) {
-			//Update & Send Model Matrix & Draw For Each Cube
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			model = glm::rotate(model, 20.0f * i, glm::vec3(1.0f, 3.0f, 0.5f));
-			GLuint modelLoc = glGetUniformLocation(simpleShader, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+		glUseProgram(lightShader);
 
-			//Draw Cube At Current Model Position
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
 
+		glm::mat4 lightModel;
+		lightModel = glm::translate(lightModel, glm::vec3(0.0f, 1.0f, 0.3f) * glm::vec3(10));
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+
+		sendModelViewProjToShader(lightShader, lightModel, view, projection);
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
