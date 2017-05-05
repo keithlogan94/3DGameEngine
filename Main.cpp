@@ -73,7 +73,7 @@ int main(int argc, char ** argv) {
 	glfwSetWindowSizeCallback(window, window_resize_callback);
 
 	//Pre Game Loop Setup
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -216,7 +216,27 @@ int main(int argc, char ** argv) {
 		glm::mat4 model;
 		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.3f));
 
-		glm::vec3 lightPos = glm::vec3(2.0f, 1.0f, 0.3f);
+		static glm::vec3 lightPos = glm::vec3(5.0f, 1.0f, 0.3f);
+		/* Temporarily control light */
+		extern bool keys[1024];
+		if (keys[GLFW_KEY_LEFT]) {
+			lightPos.x += 1.0f * deltaTime;
+		}
+		if (keys[GLFW_KEY_RIGHT]) {
+			lightPos.x -= 1.0f * deltaTime;
+		}
+		if (keys[GLFW_KEY_DOWN]) {
+			if (keys[GLFW_KEY_SPACE])
+				lightPos.y += 1.0f * deltaTime;
+			else
+				lightPos.z += 1.0f * deltaTime;
+		}
+		if (keys[GLFW_KEY_UP]) {
+			if (keys[GLFW_KEY_SPACE])
+				lightPos.y -= 1.0f * deltaTime;
+			else 
+				lightPos.z -= 1.0f * deltaTime;
+		}
 
 		GLint lightPosLoc = glGetUniformLocation(objectShader, "lightPos");
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
