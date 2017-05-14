@@ -209,6 +209,13 @@ int main(int argc, char ** argv) {
 		glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
 		glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
 
+		//Location of camera position in shader
+		GLint viewPosLocation = glGetUniformLocation(objectShader, "viewPos");
+		//location of camera position in world space
+		glm::vec3 cameraPos{ camera.getPos() };
+		//send camera pos to shader
+		glUniform3f(viewPosLocation, cameraPos.x, cameraPos.y, cameraPos.z);
+
 		glm::mat4 view;
 		view = camera.getView();
 		glm::mat4 projection;

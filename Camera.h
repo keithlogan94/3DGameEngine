@@ -22,6 +22,7 @@ public:
 	~Camera();
 
 	inline glm::mat4 getView() const { return view; }
+	inline glm::vec3 getPos() const { return cameraPos; }
 	void updateMovement();
 };
 

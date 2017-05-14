@@ -172,18 +172,42 @@ namespace glsl {  namespace vs {
 			uniform vec3 objectColor;
 			uniform vec3 lightColor;
 			uniform vec3 lightPos;
+			uniform vec3 viewPos;
 
 			in vec3 Normal;
 			in vec3 FragPos;
 
 			void main() {
 				vec3 norm = normalize(Normal);
+				//diffuse lighting calculations
 				vec3 lightDir = normalize(lightPos - FragPos);
 				float diff = max(dot(norm, lightDir), 0.0f);
 				vec3 diffuse = diff * lightColor;
+				//ambient lighting calculations
 				float ambientStrength = 0.1f;
 				vec3 ambient = ambientStrength * lightColor;
-				vec3 result = (ambient + diffuse) * objectColor;
+				//specular lighting calculations
+				float specularStrength = 1.0f;
+				vec3 viewDir = normalize(viewPos - FragPos);
+				vec3 reflectDir = reflect(-lightDir, norm);
+				float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+				vec3 specular = specularStrength * spec * lightColor;
+				//calculate distance from light
+				float r = 0.5f;
+				vec3 L = lightPos - FragPos;
+				float distance = length(L);
+				float d = max(distance - r, 0);
+				L /= distance;
+				// calculate basic attenuation
+				float denom = d / r + 1;
+				float attenuation = 1 / (denom*denom);
+				// scale and bias attenuation such that:
+				//   attenuation == 0 at extent of max influence
+				//   attenuation == 1 when d == 0
+				attenuation = (attenuation - 0.005f/*cutoff*/) / (1 - 0.005f/*cutoff*/);
+				attenuation = max(attenuation, 0);
+				//calculate result
+				vec3 result = (ambient + diffuse + specular) * objectColor * attenuation;
 				color = vec4(result, 1.0f);
 			}
 			);
